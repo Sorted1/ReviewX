@@ -93,7 +93,7 @@ def get_pfp_url(user_id):
 
 @app.route('/dashboard/')
 def dashboard():
-    return "nigger"
+    return "hello world"
 
 @app.errorhandler(Unauthorized)
 def redirect_unauthorized(e):
