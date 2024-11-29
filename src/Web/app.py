@@ -35,8 +35,8 @@ def index():
             'username': rev.get('username', 'Anonymous'),
             'user_id': rev.get('user_id'),
             'review': rev.get('review', 'No review available'),
-            'rating': rev.get('stars', 'No rating'),  # You can add more fields if needed
-            'date': get_revdate(rev.get('date'))
+            'rating': rev.get('stars', 'No rating'),
+            'date': get_revdate(rev.get('date'))  # You can add more fields if needed
         }
         for rev in reviews
     ]
