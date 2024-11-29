@@ -1,7 +1,7 @@
 import os
 import requests
 import pymongo
-
+import datetime
 
 from dotenv import load_dotenv
 from flask import Flask, render_template, url_for, redirect
@@ -35,12 +35,13 @@ def index():
             'username': rev.get('username', 'Anonymous'),
             'user_id': rev.get('user_id'),
             'review': rev.get('review', 'No review available'),
-            'rating': rev.get('stars', 'No rating')  # You can add more fields if needed
+            'rating': rev.get('stars', 'No rating'),  # You can add more fields if needed
+            'date': get_revdate(rev.get('date'))
         }
         for rev in reviews
     ]
 
-    return render_template('reviews.html', reviews=formatted_reviews)
+    return render_template('index.html', reviews=formatted_reviews)
 
 
 def get_revs():
@@ -62,9 +63,28 @@ def get_user(user_id):
     else:
         return None
 
+def get_revdate(revdate):
+    if revdate: 
+        revdate = datetime.datetime.strptime(revdate, "%m-%d-%Y")
+        now = datetime.datetime.now()
+        
+        delta = now - revdate
+        days_ago = delta.days
+        if days_ago < 7:
+            return f"{days_ago} days ago"
+        elif days_ago < 30:
+            weeks_ago = days_ago // 7
+            return f"{weeks_ago} weeks ago"
+        elif days_ago < 365:
+            months_ago = (now.year - revdate.year) * 12 + now.month - revdate.month
+            return f"{months_ago} months ago"
+        else:
+            years_ago = now.year - revdate.year
+            return f"{years_ago} years ago"
+    return "Date not available"
+
 def get_pfp_url(user_id):
     user_data = get_user(user_id)
-
     if user_data:
         avatar_hash = user_data.get("avatar")
         discriminator = user_data.get("discriminator", "0000")
